@@ -52,20 +52,22 @@ This project is built around a rigorous MLOps architecture, ensuring reproducibi
 
 ```mermaid
 flowchart TD
-    subgraph Data Layer [1. Data Layer]
+    subgraph DataLayer ["1. Data Layer"]
         A[(Raw CSV Data)] -->|dvc: data_cleaning| B(Cleaned CSV)
         B -->|dvc: data_preparation| C(Train & Test Split)
     end
 
-    subgraph Preprocessing & Feature Engineering [2. Preprocessing & Feature Eng]
+    subgraph PrepFeatureEng ["2. Preprocessing & Feature Eng"]
         C -->|dvc: data_preprocessing| D(ColumnTransformer)
         D -->|Distance/Time Features| E[MinMaxScaler: Numeric]
         D -->|Traffic/Distance Type| F[OrdinalEncoder: Ordinal]
         D -->|Weather/Vehicle/Day| G[OneHotEncoder: Nominal]
-        E & F & G --> H[preprocessor.joblib]
+        E --> H[preprocessor.joblib]
+        F --> H
+        G --> H
     end
 
-    subgraph Model training & Evaluation [3. Training & Registry]
+    subgraph ModelTrainEval ["3. Training & Evaluation"]
         H -->|dvc: train| I[Stacking Regressor]
         I -->|Base Learners| I1(Random Forest Regressor)
         I -->|Base Learners| I2(LightGBM Regressor)
@@ -77,16 +79,16 @@ flowchart TD
         J -->|dvc: model_registory| L[Model Registry: Staging Stage]
     end
 
-    subgraph Web Serving Layer [4. Serving & Consumption]
+    subgraph WebServing ["4. Serving & Consumption"]
         L -->|FastAPI Startup| M[FastAPI Application]
         M -->|Exposes UI & REST Endpoint| N[Interactive Web UI]
         M -->|JSON Request/Response| O[POST /predict]
     end
     
-    style Data Layer fill:#f9f,stroke:#333,stroke-width:2px
-    style Preprocessing & Feature Engineering fill:#bbf,stroke:#333,stroke-width:2px
-    style Model training & Evaluation fill:#dfd,stroke:#333,stroke-width:2px
-    style Web Serving Layer fill:#fdd,stroke:#333,stroke-width:2px
+    style DataLayer fill:#f9f,stroke:#333,stroke-width:2px
+    style PrepFeatureEng fill:#bbf,stroke:#333,stroke-width:2px
+    style ModelTrainEval fill:#dfd,stroke:#333,stroke-width:2px
+    style WebServing fill:#fdd,stroke:#333,stroke-width:2px
 ```
 
 ---
