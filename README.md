@@ -44,6 +44,11 @@ In the food tech industry, **Estimated Time of Delivery (ETD)** is a critical dr
 *   **Rider Dispatch Optimization:** Understanding how long a delivery will take under current weather and traffic conditions helps algorithms batch orders and assign the most appropriate rider.
 *   **Operational SLA Compliance:** Businesses can proactively monitor deliveries likely to breach SLAs (e.g., cold food, late arrivals) and implement mitigation steps.
 
+
+<img width="1693" height="838" alt="image" src="https://github.com/user-attachments/assets/3d4f3f97-4b83-4b45-b9c0-251fab4ace61" />
+
+
+
 ---
 
 ## 🏗️ End-to-End System Architecture
