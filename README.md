@@ -101,7 +101,8 @@ flowchart TD
 
 ---
 
-![Uploading image.png…]()
+<img width="1912" height="931" alt="image" src="https://github.com/user-attachments/assets/74b851f6-eed8-476f-9f3a-e12be26efa80" />
+
 
 
 
