@@ -8,6 +8,7 @@ const trackingUriEl = document.getElementById('tracking-uri');
 const toggleAdvancedButton = document.getElementById('toggle-advanced');
 const advancedFields = document.getElementById('advanced-fields');
 const distanceInput = document.getElementById('simple-distance');
+const resultValue = document.getElementById('result-value');
 
 const samplePayload = {
   ID: 'ORD-2048',
@@ -182,11 +183,13 @@ form.addEventListener('submit', async (event) => {
     const value = Number(result.prediction_minutes).toFixed(2);
 
     predictionValue.textContent = `${value} min`;
+    resultValue.textContent = `${value} min`;
     resultCopy.textContent = 'The model returned a delivery-time estimate based on the current input.';
     setStatus('Prediction ready', 'success');
     showMessage('Prediction completed successfully.', 'success');
   } catch (error) {
     predictionValue.textContent = 'Error';
+    resultValue.textContent = 'Error';
     resultCopy.textContent = error.message;
     setStatus('Prediction failed', 'error');
     showMessage(error.message, 'error');
@@ -198,6 +201,7 @@ loadSampleButton.addEventListener('click', fillSample);
 form.addEventListener('reset', () => {
   setTimeout(() => {
     predictionValue.textContent = '--';
+    resultValue.textContent = '--';
     resultCopy.textContent = 'Submit the form to see the model output here.';
     setStatus('Waiting for input', 'neutral');
     hideMessage();
