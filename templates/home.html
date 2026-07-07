@@ -58,66 +58,34 @@
             <h2>Prediction controls</h2>
           </div>
           <div class="toolbar">
+            <button type="button" id="toggle-advanced" class="ghost-button">Show Advanced</button>
             <button type="button" id="load-sample" class="ghost-button">Load sample</button>
             <button type="reset" class="ghost-button">Reset</button>
             <button type="submit" class="primary-button">Predict time</button>
           </div>
         </div>
 
-        <div class="grid">
+        <!-- Core inputs always visible -->
+        <div class="grid simple-fields">
           <label>
-            <span>ID</span>
-            <input name="ID" type="text" placeholder="ORD123" required />
+            <span>Delivery Distance (km)</span>
+            <input id="simple-distance" type="number" min="0.1" max="50" step="0.1" value="5.0" required />
           </label>
           <label>
-            <span>Delivery person ID</span>
-            <input name="Delivery_person_ID" type="text" placeholder="RIDER_42" required />
-          </label>
-          <label>
-            <span>Age</span>
-            <input name="Delivery_person_Age" type="number" min="1" step="1" placeholder="29" required />
-          </label>
-          <label>
-            <span>Ratings</span>
-            <input name="Delivery_person_Ratings" type="number" min="0" max="6" step="0.1" placeholder="4.6" required />
-          </label>
-          <label>
-            <span>Restaurant latitude</span>
-            <input name="Restaurant_latitude" type="number" step="any" placeholder="12.9716" required />
-          </label>
-          <label>
-            <span>Restaurant longitude</span>
-            <input name="Restaurant_longitude" type="number" step="any" placeholder="77.5946" required />
-          </label>
-          <label>
-            <span>Delivery location latitude</span>
-            <input name="Delivery_location_latitude" type="number" step="any" placeholder="12.9352" required />
-          </label>
-          <label>
-            <span>Delivery location longitude</span>
-            <input name="Delivery_location_longitude" type="number" step="any" placeholder="77.6245" required />
-          </label>
-          <label>
-            <span>Order date</span>
-            <input name="Order_Date" type="date" required />
-          </label>
-          <label>
-            <span>Order time</span>
-            <input name="Time_Orderd" type="time" required />
-          </label>
-          <label>
-            <span>Picked time</span>
-            <input name="Time_Order_picked" type="time" required />
-          </label>
-          <label>
-            <span>Vehicle condition</span>
-            <input name="Vehicle_condition" type="number" min="0" max="5" step="1" placeholder="2" required />
+            <span>Road Traffic</span>
+            <select name="Road_traffic_density" required>
+              <option value="" disabled>Select traffic</option>
+              <option value="low">Low</option>
+              <option value="medium" selected>Medium</option>
+              <option value="high">High</option>
+              <option value="jam">Jam</option>
+            </select>
           </label>
           <label>
             <span>Weather</span>
             <select name="Weatherconditions" required>
-              <option value="" selected disabled>Select weather</option>
-              <option value="conditions cloudy">Cloudy</option>
+              <option value="" disabled>Select weather</option>
+              <option value="conditions cloudy" selected>Cloudy</option>
               <option value="conditions fog">Fog</option>
               <option value="conditions rain">Rain</option>
               <option value="conditions stormy">Stormy</option>
@@ -126,54 +94,96 @@
             </select>
           </label>
           <label>
-            <span>Road traffic</span>
-            <select name="Road_traffic_density" required>
-              <option value="" selected disabled>Select traffic</option>
-              <option value="low">Low</option>
-              <option value="medium">Medium</option>
-              <option value="high">High</option>
-              <option value="jam">Jam</option>
-            </select>
+            <span>Rider Age</span>
+            <input name="Delivery_person_Age" type="number" min="18" max="70" step="1" value="29" required />
           </label>
           <label>
-            <span>Type of order</span>
+            <span>Rider Rating</span>
+            <input name="Delivery_person_Ratings" type="number" min="1.0" max="5.0" step="0.1" value="4.6" required />
+          </label>
+        </div>
+
+        <!-- Advanced parameters hidden by default -->
+        <div id="advanced-fields" class="grid advanced-fields hidden" style="margin-top: 20px; padding-top: 20px; border-top: 1px dashed rgba(255,255,255,0.1);">
+          <label>
+            <span>Order ID</span>
+            <input name="ID" type="text" placeholder="ORD123" required />
+          </label>
+          <label>
+            <span>Delivery Rider ID</span>
+            <input name="Delivery_person_ID" type="text" placeholder="RIDER_42" required />
+          </label>
+          <label>
+            <span>Restaurant Latitude</span>
+            <input name="Restaurant_latitude" type="number" step="any" placeholder="12.9716" required />
+          </label>
+          <label>
+            <span>Restaurant Longitude</span>
+            <input name="Restaurant_longitude" type="number" step="any" placeholder="77.5946" required />
+          </label>
+          <label>
+            <span>Delivery Latitude</span>
+            <input name="Delivery_location_latitude" type="number" step="any" placeholder="12.9352" required />
+          </label>
+          <label>
+            <span>Delivery Longitude</span>
+            <input name="Delivery_location_longitude" type="number" step="any" placeholder="77.6245" required />
+          </label>
+          <label>
+            <span>Order Date</span>
+            <input name="Order_Date" type="date" required />
+          </label>
+          <label>
+            <span>Order Time</span>
+            <input name="Time_Orderd" type="time" required />
+          </label>
+          <label>
+            <span>Picked Time</span>
+            <input name="Time_Order_picked" type="time" required />
+          </label>
+          <label>
+            <span>Vehicle Condition (0-3)</span>
+            <input name="Vehicle_condition" type="number" min="0" max="3" step="1" placeholder="2" required />
+          </label>
+          <label>
+            <span>Type of Order</span>
             <select name="Type_of_order" required>
-              <option value="" selected disabled>Select order type</option>
+              <option value="" disabled>Select order type</option>
               <option value="snacks">Snacks</option>
-              <option value="meal">Meal</option>
+              <option value="meal" selected>Meal</option>
               <option value="drinks">Drinks</option>
               <option value="buffet">Buffet</option>
             </select>
           </label>
           <label>
-            <span>Type of vehicle</span>
+            <span>Type of Vehicle</span>
             <select name="Type_of_vehicle" required>
-              <option value="" selected disabled>Select vehicle</option>
+              <option value="" disabled>Select vehicle</option>
               <option value="bike">Bike</option>
               <option value="scooter">Scooter</option>
               <option value="electric_scooter">Electric scooter</option>
-              <option value="motorcycle">Motorcycle</option>
+              <option value="motorcycle" selected>Motorcycle</option>
             </select>
           </label>
           <label>
-            <span>Multiple deliveries</span>
-            <input name="multiple_deliveries" type="number" min="0" step="1" placeholder="0" required />
+            <span>Multiple Deliveries</span>
+            <input name="multiple_deliveries" type="number" min="0" max="3" step="1" value="0" required />
           </label>
           <label>
-            <span>Festival</span>
+            <span>Festival?</span>
             <select name="Festival" required>
-              <option value="" selected disabled>Festival?</option>
+              <option value="" disabled>Festival?</option>
               <option value="yes">Yes</option>
-              <option value="no">No</option>
+              <option value="no" selected>No</option>
             </select>
           </label>
           <label>
-            <span>City</span>
+            <span>City Type</span>
             <select name="City" required>
-              <option value="" selected disabled>Select city</option>
+              <option value="" disabled>Select city</option>
               <option value="urban">Urban</option>
               <option value="semi-urban">Semi-urban</option>
-              <option value="metropolitan">Metropolitan</option>
+              <option value="metropolitan" selected>Metropolitan</option>
             </select>
           </label>
         </div>
