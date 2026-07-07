@@ -39,6 +39,8 @@ In the food tech industry, **Estimated Time of Delivery (ETD)** is a critical dr
 └──────────────────────────┘                                └──────────────────────────┘
 ```
 
+
+
 ### Key Business Metrics Impacted:
 *   **Customer Satisfaction & Retention:** Displaying an accurate ETD reduces anxiety and helps manage expectations, which lowers the order cancellation rate.
 *   **Rider Dispatch Optimization:** Understanding how long a delivery will take under current weather and traffic conditions helps algorithms batch orders and assign the most appropriate rider.
@@ -98,6 +100,10 @@ flowchart TD
 ```
 
 ---
+
+![Uploading image.png…]()
+
+
 
 ## 📊 Pipeline Orchestration (DVC)
 
