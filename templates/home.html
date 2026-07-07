@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Swiggy Delivery Time Control Panel</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/style.css" />
+</head>
+<body>
+  <main class="shell">
+    <section class="hero card">
+      <div class="hero-copy">
+        <p class="eyebrow">Delivery time prediction studio</p>
+        <h1>Control the model from a clean browser UI.</h1>
+        <p class="lede">
+          Enter rider, order, and route details, then get an estimated delivery time in minutes.
+          This page also exposes the current model metadata so the project is easier to operate.
+        </p>
+        <div class="meta-row">
+          <div>
+            <span class="meta-label">Model</span>
+            <strong>{{ model_name }}</strong>
+          </div>
+          <div>
+            <span class="meta-label">Stage</span>
+            <strong>{{ stage }}</strong>
+          </div>
+          <div>
+            <span class="meta-label">API</span>
+            <strong>/api/model-info</strong>
+          </div>
+        </div>
+      </div>
+      <div class="hero-panel">
+        <div class="stat">
+          <span class="stat-label">Prediction status</span>
+          <strong id="status-pill" class="pill neutral">Waiting for input</strong>
+        </div>
+        <div class="stat">
+          <span class="stat-label">Latest estimate</span>
+          <strong id="prediction-value">--</strong>
+        </div>
+        <div class="stat">
+          <span class="stat-label">Tracking backend</span>
+          <strong id="tracking-uri">Loading...</strong>
+        </div>
+      </div>
+    </section>
+
+    <section class="layout">
+      <form id="prediction-form" class="card form-card">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">Input form</p>
+            <h2>Prediction controls</h2>
+          </div>
+          <div class="toolbar">
+            <button type="button" id="load-sample" class="ghost-button">Load sample</button>
+            <button type="reset" class="ghost-button">Reset</button>
+            <button type="submit" class="primary-button">Predict time</button>
+          </div>
+        </div>
+
+        <div class="grid">
+          <label>
+            <span>ID</span>
+            <input name="ID" type="text" placeholder="ORD123" required />
+          </label>
+          <label>
+            <span>Delivery person ID</span>
+            <input name="Delivery_person_ID" type="text" placeholder="RIDER_42" required />
+          </label>
+          <label>
+            <span>Age</span>
+            <input name="Delivery_person_Age" type="number" min="1" step="1" placeholder="29" required />
+          </label>
+          <label>
+            <span>Ratings</span>
+            <input name="Delivery_person_Ratings" type="number" min="0" max="6" step="0.1" placeholder="4.6" required />
+          </label>
+          <label>
+            <span>Restaurant latitude</span>
+            <input name="Restaurant_latitude" type="number" step="any" placeholder="12.9716" required />
+          </label>
+          <label>
+            <span>Restaurant longitude</span>
+            <input name="Restaurant_longitude" type="number" step="any" placeholder="77.5946" required />
+          </label>
+          <label>
+            <span>Delivery location latitude</span>
+            <input name="Delivery_location_latitude" type="number" step="any" placeholder="12.9352" required />
+          </label>
+          <label>
+            <span>Delivery location longitude</span>
+            <input name="Delivery_location_longitude" type="number" step="any" placeholder="77.6245" required />
+          </label>
+          <label>
+            <span>Order date</span>
+            <input name="Order_Date" type="date" required />
+          </label>
+          <label>
+            <span>Order time</span>
+            <input name="Time_Orderd" type="time" required />
+          </label>
+          <label>
+            <span>Picked time</span>
+            <input name="Time_Order_picked" type="time" required />
+          </label>
+          <label>
+            <span>Vehicle condition</span>
+            <input name="Vehicle_condition" type="number" min="0" max="5" step="1" placeholder="2" required />
+          </label>
+          <label>
+            <span>Weather</span>
+            <select name="Weatherconditions" required>
+              <option value="" selected disabled>Select weather</option>
+              <option value="conditions cloudy">Cloudy</option>
+              <option value="conditions fog">Fog</option>
+              <option value="conditions rain">Rain</option>
+              <option value="conditions stormy">Stormy</option>
+              <option value="conditions sunny">Sunny</option>
+              <option value="conditions windy">Windy</option>
+            </select>
+          </label>
+          <label>
+            <span>Road traffic</span>
+            <select name="Road_traffic_density" required>
+              <option value="" selected disabled>Select traffic</option>
+              <option value="low">Low</option>
+              <option value="medium">Medium</option>
+              <option value="high">High</option>
+              <option value="jam">Jam</option>
+            </select>
+          </label>
+          <label>
+            <span>Type of order</span>
+            <select name="Type_of_order" required>
+              <option value="" selected disabled>Select order type</option>
+              <option value="snacks">Snacks</option>
+              <option value="meal">Meal</option>
+              <option value="drinks">Drinks</option>
+              <option value="buffet">Buffet</option>
+            </select>
+          </label>
+          <label>
+            <span>Type of vehicle</span>
+            <select name="Type_of_vehicle" required>
+              <option value="" selected disabled>Select vehicle</option>
+              <option value="bike">Bike</option>
+              <option value="scooter">Scooter</option>
+              <option value="electric_scooter">Electric scooter</option>
+              <option value="motorcycle">Motorcycle</option>
+            </select>
+          </label>
+          <label>
+            <span>Multiple deliveries</span>
+            <input name="multiple_deliveries" type="number" min="0" step="1" placeholder="0" required />
+          </label>
+          <label>
+            <span>Festival</span>
+            <select name="Festival" required>
+              <option value="" selected disabled>Festival?</option>
+              <option value="yes">Yes</option>
+              <option value="no">No</option>
+            </select>
+          </label>
+          <label>
+            <span>City</span>
+            <select name="City" required>
+              <option value="" selected disabled>Select city</option>
+              <option value="urban">Urban</option>
+              <option value="semi-urban">Semi-urban</option>
+              <option value="metropolitan">Metropolitan</option>
+            </select>
+          </label>
+        </div>
+
+        <div id="form-message" class="message hidden"></div>
+      </form>
+
+      <aside class="card result-card">
+        <p class="eyebrow">Output</p>
+        <h2>Prediction result</h2>
+        <div class="result-box">
+          <span class="result-label">Estimated delivery time</span>
+          <strong id="result-value">No prediction yet</strong>
+          <p id="result-copy">Submit the form to see the model output here.</p>
+        </div>
+        <div class="notes">
+          <div class="note-item">
+            <span>Control</span>
+            <p>Use the sample button to populate a known-good payload.</p>
+          </div>
+          <div class="note-item">
+            <span>API</span>
+            <p>The same form sends JSON to <code>/predict</code> for programmatic use.</p>
+          </div>
+          <div class="note-item">
+            <span>Model info</span>
+            <p>Tracked via local MLflow so registration and app startup stay in sync.</p>
+          </div>
+        </div>
+      </aside>
+    </section>
+  </main>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>
