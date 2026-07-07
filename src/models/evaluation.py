@@ -1,6 +1,7 @@
 import pandas as pd
 import joblib
 import logging
+import os
 from pathlib import Path
 from sklearn.model_selection import cross_val_score
 from sklearn.metrics import mean_absolute_error, r2_score
@@ -8,12 +9,8 @@ import json
 
 try:
     import mlflow
-    import dagshub
 except ImportError:
     mlflow = None
-    dagshub = None
-
-MLFLOW_AVAILABLE = False
 
 TARGET = "time_taken"
 
@@ -34,23 +31,23 @@ formatter = logging.Formatter(fmt='%(asctime)s - %(name)s - %(levelname)s - %(me
 handler.setFormatter(formatter)
 
 
-if mlflow is not None and dagshub is not None:
+def configure_mlflow(root_path: Path) -> bool:
+    if mlflow is None:
+        logger.info("MLflow dependencies are not installed, skipping remote logging")
+        return False
+
     try:
-        # initialize dagshub
-        dagshub.init(repo_owner='sanjit507', 
-                     repo_name='Swiggy_Delivery_Time_Prediction', 
-                     mlflow=True)
+        tracking_uri = os.getenv("MLFLOW_TRACKING_URI")
+        if not tracking_uri:
+            mlflow_db_path = (root_path / "mlflow.db").resolve()
+            tracking_uri = f"sqlite:///{mlflow_db_path.as_posix()}"
 
-        # set the mlflow tracking server
-        mlflow.set_tracking_uri("https://dagshub.com/sanjit507/Swiggy_Delivery_Time_Prediction.mlflow")
-
-        # set mlflow experment name
+        mlflow.set_tracking_uri(tracking_uri)
         mlflow.set_experiment("DVC Pipeline")
-        MLFLOW_AVAILABLE = True
+        return True
     except Exception as exc:
         logger.warning("MLflow logging is unavailable, skipping remote logging: %s", exc)
-else:
-    logger.info("MLflow dependencies are not installed, skipping remote logging")
+        return False
 
 
 def load_data(data_path: Path) -> pd.DataFrame:
@@ -86,6 +83,7 @@ def save_model_info(save_json_path,run_id, artifact_path, model_name):
 if __name__ == "__main__":
     # root path
     root_path = Path(__file__).parent.parent.parent
+    mlflow_available = configure_mlflow(root_path)
     # train data load path
     train_data_path = root_path / "data" / "processed" / "train_trans.csv"
     test_data_path = root_path / "data" / "processed" / "test_trans.csv"
@@ -140,7 +138,7 @@ if __name__ == "__main__":
     artifact_uri = ""
     
     run_id = ""
-    if MLFLOW_AVAILABLE:
+    if mlflow_available:
         try:
             # log with mlflow
             with mlflow.start_run() as run:
@@ -173,7 +171,12 @@ if __name__ == "__main__":
                                             model_output=model.predict(X_train.sample(20,random_state=42)))
                 
                 # log the final model
-                mlflow.sklearn.log_model(model,"delivery_time_pred_model",signature=model_signature)
+                mlflow.sklearn.log_model(
+                    model,
+                    "delivery_time_pred_model",
+                    signature=model_signature,
+                    serialization_format="cloudpickle",
+                )
 
                 # log stacking regressor
                 mlflow.log_artifact(root_path / "models" / "stacking_regressor.joblib")
